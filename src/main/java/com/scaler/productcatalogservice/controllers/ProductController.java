@@ -24,7 +24,7 @@ public class ProductController {
     @GetMapping("/product/{id}")
     public ResponseEntity<ProductDto> getProductById(@PathVariable("id") Long id) {
         if(id<=0){
-            throw new IllegalArgumentException("product id available in between 1to 20");
+            throw new IllegalArgumentException("product id available in between 3 to 14");
         }
         Product product=productService.getProductById(id);
         if(product==null){

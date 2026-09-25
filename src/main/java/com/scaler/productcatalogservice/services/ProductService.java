@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Component("productService")
@@ -32,12 +33,16 @@ public class ProductService implements IProductService{
     @Override
     public Product createProduct(ProductDto productDto) {
         Product product =from(productDto);
-        //find the category exist or not
-        Category category=categoryrepo.findById(productDto.getCategoryDto().getId())
-                .orElseThrow(()->new RuntimeException("Category not found"));
 
-        //If exist the category to save into the Product inside
-        product.setCategory(category);
+        Optional<Category> category=categoryrepo.findByName(productDto.getCategoryDto().getName());
+        if(category.isPresent()){
+            //Category already exists
+            product.setCategory(category.get());
+        }else{
+            // Category does not exist
+            Category savedCategory = categoryrepo.save(product.getCategory());
+            product.setCategory(savedCategory);
+        }
         return productrepo.save(product);
     }
 
